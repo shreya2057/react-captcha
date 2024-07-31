@@ -1,11 +1,13 @@
 import { Button, Heading, VStack } from "@chakra-ui/react";
-import { RefObject, useRef } from "react";
+import { RefObject, useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { FormControl } from "./component/form/FormControl";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReCaptcha } from "./component/Recaptcha";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { Hcaptcha } from "./component/Hcaptcha";
 
 const validationSchema = z.object({
   email: z.string().email({ message: "Email is invalid" }),
@@ -18,10 +20,15 @@ function App() {
     defaultValues: { email: "", password: "", captcha_type: "" },
     resolver: zodResolver(validationSchema),
   });
-  const captchaRef = useRef() as RefObject<ReCAPTCHA>;
+  const recaptchaRef = useRef() as RefObject<ReCAPTCHA>;
+  const hcaptchaRef = useRef() as RefObject<HCaptcha>;
+  const [hcaptchToken, setToken] = useState("");
   const onSubmit = (data: z.infer<typeof validationSchema>) => {
-    if (captchaRef) {
-      console.log({ data }, captchaRef?.current?.getValue());
+    if (recaptchaRef) {
+      console.log({ data }, recaptchaRef?.current?.getValue());
+    }
+    if (hcaptchaRef && hcaptchToken !== "") {
+      console.log({ data }, hcaptchToken);
     }
   };
   return (
@@ -53,7 +60,10 @@ function App() {
           label="Captcha Type"
         />
         {form.watch("captcha_type") === "recaptcha" && (
-          <ReCaptcha captchaRef={captchaRef} />
+          <ReCaptcha captchaRef={recaptchaRef} />
+        )}
+        {form.watch("captcha_type") === "hcaptcha" && (
+          <Hcaptcha captchaRef={hcaptchaRef} setToken={setToken} />
         )}
         <Button type="submit">Submit</Button>
       </VStack>
