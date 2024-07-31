@@ -1,5 +1,5 @@
 import ReCAPTCHA from "react-google-recaptcha";
-import { SITE_KEY } from "../constants";
+import { RECHAPTCHA_SITE_KEY } from "../constants";
 import { RefObject } from "react";
 
 export const ReCaptcha = ({
@@ -7,5 +7,5 @@ export const ReCaptcha = ({
 }: {
   captchaRef: RefObject<ReCAPTCHA>;
 }) => {
-  return <ReCAPTCHA ref={captchaRef} sitekey={SITE_KEY} />;
+  return <ReCAPTCHA ref={captchaRef} sitekey={RECHAPTCHA_SITE_KEY} />;
 };
