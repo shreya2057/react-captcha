@@ -1,19 +1,23 @@
 import { Button, Heading, VStack } from "@chakra-ui/react";
-// import "./App.css";
 import { RefObject, useRef } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { FormControl } from "./component/form/FormControl";
-import { SITE_KEY } from "./constants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ReCaptcha } from "./component/Recaptcha";
 
 const validationSchema = z.object({
   email: z.string().email({ message: "Email is invalid" }),
   password: z.string().min(1, { message: "Password is required" }),
+  captcha_type: z.string().min(1, { message: "Captcha type is required" }),
 });
 
 function App() {
-  const form = useForm<z.infer<typeof validationSchema>>();
+  const form = useForm<z.infer<typeof validationSchema>>({
+    defaultValues: { email: "", password: "", captcha_type: "" },
+    resolver: zodResolver(validationSchema),
+  });
   const captchaRef = useRef() as RefObject<ReCAPTCHA>;
   const onSubmit = (data: z.infer<typeof validationSchema>) => {
     if (captchaRef) {
@@ -41,7 +45,16 @@ function App() {
           name="password"
           label="Password"
         />
-        <ReCAPTCHA ref={captchaRef} sitekey={SITE_KEY} />
+        <FormControl
+          inputControl="radio"
+          control={form.control}
+          name="captcha_type"
+          values={["recaptcha", "hcaptcha"]}
+          label="Captcha Type"
+        />
+        {form.watch("captcha_type") === "recaptcha" && (
+          <ReCaptcha captchaRef={captchaRef} />
+        )}
         <Button type="submit">Submit</Button>
       </VStack>
     </VStack>

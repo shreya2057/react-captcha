@@ -1,5 +1,6 @@
 import { FieldValues } from "react-hook-form";
 import { Input, InputProps } from "./Input";
+import { RadioInput, RadioInputProps } from "./RadioInput";
 
 export const FormControl = <TFieldValues extends FieldValues>({
   inputControl,
@@ -8,9 +9,11 @@ export const FormControl = <TFieldValues extends FieldValues>({
   switch (inputControl) {
     case "input":
       return <Input {...(rest as InputProps<TFieldValues>)} />;
+    case "radio":
+      return <RadioInput {...(rest as RadioInputProps<TFieldValues>)} />;
   }
 };
 
 type FormControlProps<TFieldValues extends FieldValues> = {
-  inputControl: "input";
-} & InputProps<TFieldValues>;
+  inputControl: "input" | "radio";
+} & (InputProps<TFieldValues> | RadioInputProps<TFieldValues>);
